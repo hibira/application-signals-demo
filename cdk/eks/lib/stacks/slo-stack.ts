@@ -117,8 +117,8 @@ export class SloStack extends Stack {
             undefined,
             "/owners/{ownerId:int}/pets/{petId:int}/payments",
             "payment-service-dotnet",
-            undefined,
-            exclusionWindows
+            // undefined,
+            // exclusionWindows
         ));
 
         getOwner99AvailabilitySlo.node.addDependency(enableTopologyDiscovery);
