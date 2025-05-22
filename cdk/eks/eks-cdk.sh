@@ -64,12 +64,12 @@ if [[ "$ACTION" == "deploy" ]]; then
     if cdk deploy --context enableSlo=True --all --require-approval never; then
       echo "Synthetic canary and SLO was deployed successfully"
     else
-      echo "Synthetic canary and SLO failed to deploy"
-      cdk destroy --context enableSlo=True --all --force --verbose
+      echo "Synthetic canary and SLO failed to deploy. Please run `cdk destroy --context enableSlo=True --all --force --verbose`"
+      # cdk destroy --context enableSlo=True --all --force --verbose
       exit 1
     fi
   else
-    echo "Deployment failed !!!!"
+    echo "Deployment failed. Please run `cdk destroy --all --force --verbose`"
     # echo "Deployment failed. Attempting to clean up resources by destroying all stacks..."
     # cdk destroy --all --force --verbose
     exit 1
