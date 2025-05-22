@@ -23,37 +23,113 @@ This code for sample application is intended for demonstration purposes only. It
 # EKS demo
 
 ## Deploy via Shell Scripts
+[AWS Cloud9](https://docs.aws.amazon.com/cloud9/latest/user-guide/welcome.html) is no longer available for use with new accounts.
+そのため、EC2上に作成した Visual Studio Code を利用します。
 
-Note that if you want to run the scripts in a shell inside an [AWS Cloud9](https://docs.aws.amazon.com/cloud9/latest/user-guide/welcome.html) environment, you need to ensure the environment has sufficient disk space, as building images can consume a lot of space. To increase the disk size to 50 GB, follow the instructions here: [Resize Cloud9 Environment](https://docs.aws.amazon.com/cloud9/latest/user-guide/move-environment.html#move-environment-resize). Additionally, you need to disable AWS managed temporary credentials to avoid credential renewal interfering with script execution. Instructions can be found here: [Disable AWS managed temporary credentials](https://catalog.workshops.aws/observability/en-US/workshopstudio/setup-cloud9#disable-aws-managed-temporary-credentials).
+## Creating Visual Studio Code on EC2
 
+1. Cloudformationの画面を開きます。[Create stack]を選択します。[Upload a template file]を選択し、ファイル「ec2-ssm.yml」を選択します。「Next」をクリックします。[Stack name] に `ec2-ssm` を入力します。[Next]をクリックします。[I acknowledge that AWS CloudFormation might create IAM resources with custom names.]をチェックします。[Next]をクリックします。[Submit]をクリックし、Slackを作成します。
+
+3. Wait until the stack status changes to **CREATE_COMPLETE**. This usually takes about 7-8 minutes.
+
+4. Open the **Outputs** tab. VSCodeWebUrl の URL を開きます。Passwordを求められるため、Password を入力します。
+
+7. The Code Editor will be displayed.
+
+インスタンスロールに `AdministratorAccess` policy をアタッチする
+
+8. Select ≡ > Terminal > New Terminal in the top left to display the terminal.
+
+9. Run the following command in the terminal to install CDK:
+
+   ``` shell
+   npm install -g aws-cdk
+   ```
+
+10. Run the following commands in the terminal to install Docker:
+
+   ``` shell
+   # Add Docker's official GPG key:
+   sudo apt-get update
+   sudo apt-get install ca-certificates curl
+   sudo install -m 0755 -d /etc/apt/keyrings
+   sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+   sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+   # Add the repository to Apt sources:
+   echo \
+     "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+     $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+     sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+   sudo apt-get update
+
+   sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+   sudo usermod -aG docker $USER
+   newgrp docker
+
+   docker run hello-world
+   ```
+
+11. Run the following commands in the terminal to install JDK:
+
+   ``` shell
+   sudo apt install -y openjdk-17-jdk
+   java -version
+   ```
+
+11. Run the following commands in the terminal to install go-lang:
+   ``` shell
+   sudo apt install golang-1.22
+   GOPATH=~/go
+   GOROOT=/usr/lib/go-1.22
+   PATH=$GOROOT/bin:$PATH
+   go version
+   ```
+
+
+12. Run the following command in the terminal to download the demo code:
+
+   ``` shell
+   git clone https://github.com/aws-observability/application-signals-demo.git
+   cd application-signals-demo
+   ```
 
 ### Build the sample application images and push to ECR
 
 1. Build container images for each micro-service application
 
-``` shell
-
-./mvnw clean install -P buildDocker
-```
+   ``` shell
+   ./mvnw clean install -P buildDocker
+   ```
 
 2. Create an ECR repo for each micro service and push the images to the relevant repos. Replace the aws account id and the AWS Region.
 
-``` shell
-export ACCOUNT=`aws sts get-caller-identity | jq .Account -r`
-export REGION='us-east-1'
-./push-ecr.sh
-```
+   ``` shell
+   export ACCOUNT=`aws sts get-caller-identity | jq .Account -r`
+   echo ACCOUNT=$ACCOUNT
+   export REGION=$(TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"` \
+&& curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
+   echo REGION=$REGION
+   ./push-ecr.sh
+   ```
 
 ### Try Application Signals with the sample application
-1. Set up a EKS cluster and deploy sample app. Replace `region-name` with the region you choose.
+1. Set up a EKS cluster and deploy sample app.
 
    ``` shell
-   cd scripts/eks/appsignals && ./setup-eks-demo.sh --region=region-name
+   export REGION=$(TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"` \
+&& curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
+   echo REGION=$REGION
+   cd scripts/eks/appsignals && ./setup-eks-demo.sh --region=$REGION
    ``` 
 
-2. Clean up after you are done with the sample app. Replace `region-name` with the same value that you use in previous step.
+2. Clean up after you are done with the sample app.
    ```
-   cd scripts/eks/appsignals/ && ./setup-eks-demo.sh --operation=delete --region=region-name
+   export REGION=$(TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"` \
+&& curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
+   echo REGION=$REGION
+   cd scripts/eks/appsignals/ && ./setup-eks-demo.sh --operation=delete --region=$REGION
    ```
 
 Please be aware that this sample application includes a publicly accessible Application Load Balancer (ALB), enabling easy interaction with the application. If you perceive this public ALB as a security risk, consider restricting access by employing [security groups](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-update-security-groups.html).
@@ -67,7 +143,9 @@ Please be aware that this sample application includes a publicly accessible Appl
 
    aws s3 mb s3://tfstate-$(uuidgen | tr A-Z a-z)
 
-   export AWS_REGION=us-east-1
+   export AWS_REGION=$(TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"` \
+&& curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
+   echo AWS_REGION=$AWS_REGION
    export TFSTATE_KEY=application-signals/demo-applications
    export TFSTATE_BUCKET=$(aws s3 ls --output text | awk '{print $3}' | grep tfstate-)
    export TFSTATE_REGION=$AWS_REGION
