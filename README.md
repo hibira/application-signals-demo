@@ -20,35 +20,30 @@ This code for sample application is intended for demonstration purposes only. It
 * Node.js >= v18.0.0 is installed.
 * [Optional] If you plan to install the infrastructure resources using Terraform, terraform cli is required. https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli
 * [Optional] If you want to try out AWS Bedrock/GenAI support with Application Signals, enable Amazon Titian, Anthropic Claude, Meta Llama foundation models by following the instructions in https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html
+
 # EKS demo
 
 ## Deploy via Shell Scripts
 [AWS Cloud9](https://docs.aws.amazon.com/cloud9/latest/user-guide/welcome.html) is no longer available for use with new accounts.
 そのため、EC2上に作成した Visual Studio Code を利用します。
 
-## Creating Visual Studio Code on EC2
+### Creating Visual Studio Code on EC2
 
 1. Cloudformationの画面を開きます。[Create stack]を選択します。[Upload a template file]を選択し、ファイル「ec2-ssm.yml」を選択します。「Next」をクリックします。[Stack name] に `ec2-ssm` を入力します。[Next]をクリックします。[I acknowledge that AWS CloudFormation might create IAM resources with custom names.]をチェックします。[Next]をクリックします。[Submit]をクリックし、Slackを作成します。
 
 3. Wait until the stack status changes to **CREATE_COMPLETE**. This usually takes about 7-8 minutes.
 
-4. Open the **Outputs** tab. VSCodeWebUrl の URL を開きます。Passwordを求められるため、Password を入力します。
+4. 作成されたEC2インスタンスのインスタンスロールに `AdministratorAccess` ポリシーをアタッチします。
 
-7. The Code Editor will be displayed.
+7. Open the **Outputs** tab. VSCodeWebUrl の URL を開きます。Passwordを求められるため、Password を入力します。
 
-インスタンスロールに `AdministratorAccess` policy をアタッチする
+8. Visual Studio Code will be displayed.
 
-8. Select ≡ > Terminal > New Terminal in the top left to display the terminal.
-
-9. Run the following command in the terminal to install CDK:
-
-   ``` shell
-   npm install -g aws-cdk
-   ```
+9. Select ≡ > Terminal > New Terminal in the top left to display the terminal.
 
 10. Run the following commands in the terminal to install Docker:
 
-   ``` shell
+``` shell
    # Add Docker's official GPG key:
    sudo apt-get update
    sudo apt-get install ca-certificates curl
@@ -69,7 +64,7 @@ This code for sample application is intended for demonstration purposes only. It
    newgrp docker
 
    docker run hello-world
-   ```
+```
 
 11. Run the following commands in the terminal to install JDK:
 
@@ -87,50 +82,50 @@ This code for sample application is intended for demonstration purposes only. It
    go version
    ```
 
-
 12. Run the following command in the terminal to download the demo code:
 
-   ``` shell
-   git clone https://github.com/aws-observability/application-signals-demo.git
-   cd application-signals-demo
-   ```
+``` shell
+git clone https://github.com/hibira/application-signals-demo.git
+cd application-signals-demo
+git checkout remove-cloud9
+```
 
 ### Build the sample application images and push to ECR
 
 1. Build container images for each micro-service application
 
-   ``` shell
-   ./mvnw clean install -P buildDocker
-   ```
+``` shell
+./mvnw clean install -P buildDocker
+```
 
 2. Create an ECR repo for each micro service and push the images to the relevant repos. Replace the aws account id and the AWS Region.
 
-   ``` shell
+``` shell
    export ACCOUNT=`aws sts get-caller-identity | jq .Account -r`
    echo ACCOUNT=$ACCOUNT
    export REGION=$(TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"` \
 && curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
    echo REGION=$REGION
    ./push-ecr.sh
-   ```
+```
 
 ### Try Application Signals with the sample application
 1. Set up a EKS cluster and deploy sample app.
 
-   ``` shell
+``` shell
    export REGION=$(TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"` \
 && curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
    echo REGION=$REGION
    cd scripts/eks/appsignals && ./setup-eks-demo.sh --region=$REGION
-   ``` 
+``` 
 
 2. Clean up after you are done with the sample app.
-   ```
+```
    export REGION=$(TOKEN=`curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600"` \
 && curl -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/dynamic/instance-identity/document | jq -r '.region')
    echo REGION=$REGION
    cd scripts/eks/appsignals/ && ./setup-eks-demo.sh --operation=delete --region=$REGION
-   ```
+```
 
 Please be aware that this sample application includes a publicly accessible Application Load Balancer (ALB), enabling easy interaction with the application. If you perceive this public ALB as a security risk, consider restricting access by employing [security groups](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-update-security-groups.html).
 
@@ -138,7 +133,7 @@ Please be aware that this sample application includes a publicly accessible Appl
 
 1. Go to the terraform directory under the project. Prepare Terraform S3 backend and set required environment variables
 
-   ``` shell
+``` shell
    cd terraform/eks
 
    aws s3 mb s3://tfstate-$(uuidgen | tr A-Z a-z)
@@ -149,11 +144,11 @@ Please be aware that this sample application includes a publicly accessible Appl
    export TFSTATE_KEY=application-signals/demo-applications
    export TFSTATE_BUCKET=$(aws s3 ls --output text | awk '{print $3}' | grep tfstate-)
    export TFSTATE_REGION=$AWS_REGION
-   ```
+```
 
 2. Deploy EKS cluster and RDS postgreSQL database.
 
-   ``` shell
+``` shell
 
    export TF_VAR_cluster_name=app-signals-demo
    export TF_VAR_cloudwatch_observability_addon_version=v2.1.0-eksbuild.1
@@ -161,13 +156,13 @@ Please be aware that this sample application includes a publicly accessible Appl
    terraform init -backend-config="bucket=${TFSTATE_BUCKET}" -backend-config="key=${TFSTATE_KEY}" -backend-config="region=${TFSTATE_REGION}"
 
    terraform apply --auto-approve
-   ```
+```
 
    The deployment takes 20 - 25 minutes.
 
 3. Build and push docker images
 
-   ``` shell
+``` shell
    cd ../.. 
 
    ./mvnw clean install -P buildDocker
@@ -176,40 +171,39 @@ Please be aware that this sample application includes a publicly accessible Appl
    export REGION=$AWS_REGION
 
    ./push-ecr.sh
-   ```
+```
 
 4. Deploy Kubernetes resources
 
    Change the cluster-name, alias and region if you configure them differently.
 
-   ``` shell
+``` shell
    aws eks update-kubeconfig --name $TF_VAR_cluster_name  --kubeconfig ~/.kube/config --region $AWS_REGION --alias $TF_VAR_cluster_name
    ./scripts/eks/appsignals/tf-deploy-k8s-res.sh
-
-   ```
+```
 
 5. Create Canaries and SLOs
 
-   ``` shell
+``` shell
    endpoint="http://$(kubectl get ingress -o json  --output jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}')"
    cd scripts/eks/appsignals/
    ./create-canaries.sh $AWS_REGION create $endpoint
    ./create-slo.sh $TF_VAR_cluster_name $AWS_REGION
-   ```
+```
 
 6. Visit Application
 
-   ``` shell
+``` shell
    endpoint="http://$(kubectl get ingress -o json  --output jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}')"
 
    echo "Visit the following URL to see the sample app running: $endpoint"
-   ```
+```
 
 7. Cleanup
 
    Delete ALB ingress, SLOs and Canaries before destroy terraform stack.
 
-   ``` shell
+``` shell
 
    kubectl delete -f ./scripts/eks/appsignals/sample-app/alb-ingress/petclinic-ingress.yaml
 
@@ -219,7 +213,7 @@ Please be aware that this sample application includes a publicly accessible Appl
 
    cd ../../../terraform/eks
    terraform destroy --auto-approve
-   ```
+```
 
 # EC2 Demo
 The following instructions describe how to set up the pet clinic sample application on EC2 instances. You can run these steps in your personal AWS account to follow along (Not recommended for production usage).
