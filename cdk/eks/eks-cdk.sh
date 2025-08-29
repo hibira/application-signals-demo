@@ -60,17 +60,18 @@ if [[ "$ACTION" == "deploy" ]]; then
     echo "Deployment successful for sample app in EKS Cluster"
 
     # Once the sample app is deployed, it will take up to 10 minutes for SLO metrics to appear
-    sleep 600
+    sleep 1200
     if cdk deploy --context enableSlo=True --all --require-approval never; then
       echo "Synthetic canary and SLO was deployed successfully"
     else
-      echo "Synthetic canary and SLO failed to deploy"
-      cdk destroy --context enableSlo=True --all --force --verbose
+      echo "Synthetic canary and SLO failed to deploy. Please run `cdk destroy --context enableSlo=True --all --force --verbose`"
+      # cdk destroy --context enableSlo=True --all --force --verbose
       exit 1
     fi
   else
-    echo "Deployment failed. Attempting to clean up resources by destroying all stacks..."
-    cdk destroy --all --force --verbose
+    echo "Deployment failed. Please run `cdk destroy --all --force --verbose`"
+    # echo "Deployment failed. Attempting to clean up resources by destroying all stacks..."
+    # cdk destroy --all --force --verbose
     exit 1
   fi
 elif [[ "$ACTION" == "destroy" ]]; then

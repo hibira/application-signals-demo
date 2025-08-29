@@ -1,24 +1,24 @@
 {
   "log_test_cases": [
-          {
-        "test_case_id": "lambda_integration_fault_logs_availability_check",
-        "description": "Verify there is fault trace in appointment-service-get trace segments (Scenario 1)",
-        "test_scenario": "Scenario 1",
-        "log_group_names": [
-          "aws/spans"
-        ],
-        "query_string": "fields @timestamp, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"appointment-service-get\" and attributes.aws.local.environment = \"lambda:default\"  and attributes.aws.local.operation = \"appointment-service-get/FunctionHandler\" and not ispresent(attributes.aws.remote.service) and (statusCode>=500 or statusCode=\"ERROR\")  | limit 10",
-        "time_range": {
-          "relative_minutes": 30
-        },
-        "validation_checks": [
-          {
-            "check_type": "count",
-            "expected_count": 1,
-            "comparison_operator": "GreaterThanOrEqualToThreshold"
-          }
-        ]
+    {
+      "test_case_id": "lambda_integration_fault_logs_availability_check",
+      "description": "Verify there is fault trace in appointment-service-get trace segments (Scenario 1)",
+      "test_scenario": "Scenario 1",
+      "log_group_names": [
+        "aws/spans"
+      ],
+      "query_string": "fields @timestamp, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"appointment-service-get\" and attributes.aws.local.environment = \"lambda:default\"  and attributes.aws.local.operation = \"appointment-service-get/FunctionHandler\" and not ispresent(attributes.aws.remote.service) and (statusCode>=500 or statusCode=\"ERROR\")  | limit 10",
+      "time_range": {
+        "relative_minutes": 30
       },
+      "validation_checks": [
+        {
+          "check_type": "count",
+          "expected_count": 1,
+          "comparison_operator": "GreaterThanOrEqualToThreshold"
+        }
+      ]
+    },
     {
       "test_case_id": "genai_integration_prompt_logs_availability_check",
       "description": "Verify specific prompt exists in Customers-service-java logs (Scenario 3)",
@@ -49,7 +49,9 @@
       "test_case_id": "check_owner_id_in_payment_service_logs_availability_check",
       "description": "Verify owner.id in payment service logs (Scenario 4)",
       "test_scenario": "Scenario 4",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @timestamp, @message,traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"payment-service-dotnet\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"GET /owners/{ownerId:int}/pets/{petId:int}/payments\" and not ispresent(attributes.aws.remote.service) and statusCode>=400 and statusCode<500  | limit 10",
       "time_range": {
         "relative_minutes": 30
@@ -72,7 +74,9 @@
       "test_case_id": "check_provisioned_throughput_exceeded_exception_logs_availability_check",
       "description": "Verify ProvisionedThroughputExceededException in visits-service-java logs (Scenario 6)",
       "test_scenario": "Scenario 6",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @message, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration | filter attributes.aws.local.service=\"visits-service-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"POST /owners/{ownerId}/pets/{petId}/visits\" and not ispresent(attributes.aws.remote.service) and (statusCode>=500 or statusCode=\"ERROR\")  #no-attribute-selected | limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -95,7 +99,9 @@
       "test_case_id": "container_insights_integration_logs_availability_check",
       "description": "Verify container metrics integration (Scenario 7)",
       "test_scenario": "Scenario 7",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @timestamp, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration | filter attributes.aws.local.service=\"pet-clinic-frontend-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"POST /api/customer/owners\" and not ispresent(attributes.aws.remote.service)  | sort duration asc | limit 10",
       "time_range": {
         "relative_minutes": 30
@@ -113,7 +119,9 @@
       "test_case_id": "sqs_dependency_errors_logs_availability_check",
       "description": "Verify SQS error logs (Scenario 8)",
       "test_scenario": "Scenario 8",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @timestamp, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration | filter attributes.aws.local.service=\"customers-service-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.remote.service = \"AWS::SQS\" and attributes.aws.remote.operation = \"PurgeQueue\" and attributes.aws.remote.resource.identifier = \"apm_test\" and statusCode>=400 and statusCode<500 | limit 10",
       "time_range": {
         "relative_minutes": 30
@@ -130,7 +138,9 @@
     {
       "test_case_id": "check_owner_id_in_customers_service_PUT_owners_ownerId_pets_petId_logs_availability_check",
       "description": "Verify owner.id in customers-service-java PUT /owners/{ownerId}/pets/{petId} operationlogs (Scenario 13)",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "test_scenario": "Scenario 13",
       "query_string": "fields @message, @timestamp, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"customers-service-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"PUT /owners/{ownerId}/pets/{petId}\" and not ispresent(attributes.aws.remote.service)  | sort duration asc | limit 10",
       "time_range": {
@@ -139,7 +149,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -153,7 +163,9 @@
       "test_case_id": "check_owner_id_in_customers_service_logs_PUT_owners_ownerId_pets_petId_availability_check",
       "description": "Verify owner.id in customers-service-java PUT /owners/{ownerId}/pets/{petId} operationlogs (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @timestamp, @message,traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"customers-service-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"PUT /owners/{ownerId}/pets/{petId}\" and not ispresent(attributes.aws.remote.service)  | sort duration asc | limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -161,7 +173,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -176,7 +188,9 @@
       "test_case_id": "check_owner_id_in_customers_service_POST_owners_ownerId_pets_availability_check",
       "description": "Verify owner.id in customers-service-java POST /owners/{ownerId}/pets operationlogs (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @message, @timestamp, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"customers-service-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"POST /owners/{ownerId}/pets\" and not ispresent(attributes.aws.remote.service)  | sort duration asc | limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -184,7 +198,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -199,7 +213,9 @@
       "test_case_id": "check_owner_id_in_customers_service_GET_owners_ownerId_logs_availability_check",
       "description": "Verify owner.id in customers-service-java GET /owners/{ownerId} operationlogs (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @message, @timestamp, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"customers-service-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"GET /owners/{ownerId}\" and not ispresent(attributes.aws.remote.service)  | sort duration asc | limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -207,7 +223,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -222,7 +238,9 @@
       "test_case_id": "check_owner_id_in_customers_service_GET_owners_ownerId_pets_petId_logs_availability_check",
       "description": "Verify owner.id in customers-service-java GET /owners/{ownerId}/pets/{petId} operationlogs (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @message, @timestamp, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"customers-service-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"GET /owners/{ownerId}/pets/{petId}\" and not ispresent(attributes.aws.remote.service)  | sort duration asc | limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -230,7 +248,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -245,7 +263,9 @@
       "test_case_id": "check_owner_id_in_customers_service_GET_diagnose_owners_ownerId_pets_petId_logs_availability_check",
       "description": "Verify owner.id in customers-service-java GET /diagnose/owners/{ownerId}/pets/{petId} operationlogs (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @message, @timestamp, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"customers-service-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"GET /diagnose/owners/{ownerId}/pets/{petId}\" and not ispresent(attributes.aws.remote.service)  | sort duration asc | limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -253,7 +273,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -268,7 +288,9 @@
       "test_case_id": "check_owner_id_in_appointment_service_get_FunctionHandler_logs_availability_check",
       "description": "Verify owner.id in appointment-service-get FunctionHandler operationlogs (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @timestamp, @message,traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duratio| filter attributes.aws.local.service=\"appointment-service-get\" and attributes.aws.local.environment = \"lambda:default\"  and attributes.aws.local.operation = \"appointment-service-get/FunctionHandler\" and not ispresent(attributes.aws.remote.service)  | sort duration asc| limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -276,7 +298,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -291,7 +313,9 @@
       "test_case_id": "check_owner_id_in_audit_service_FunctionHandler_logs_availability_check",
       "description": "Verify owner.id in audit-service FunctionHandler operationlogs (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @timestamp, @message, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"audit-service\" and attributes.aws.local.environment = \"lambda:default\"  and attributes.aws.local.operation = \"audit-service/FunctionHandler\" and not ispresent(attributes.aws.remote.service) | sort duration asc| limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -299,7 +323,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -314,7 +338,9 @@
       "test_case_id": "check_owner_id_in_visit_service_java_POST_owners_ownerId_pets_petId_visits_logs_availability_check",
       "description": "Verify owner.id in visit-service-java POST /owners/{ownerId}/pets/{petId}/visits operation logs (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @timestamp, @message, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"visits-service-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"POST /owners/{ownerId}/pets/{petId}/visits\" and not ispresent(attributes.aws.remote.service) | sort duration asc| limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -322,7 +348,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -337,7 +363,9 @@
       "test_case_id": "check_owner_id_in_visit_service_java_GET_owners_ownerId_pets_petId_visits_logs_availability_check",
       "description": "Verify owner.id in visit-service-java GET /owners/{ownerId}/pets/{petId}/visits operation logs (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @timestamp, @message, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"visits-service-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"GET /owners/{ownerId}/pets/{petId}/visits\" and not ispresent(attributes.aws.remote.service) | sort duration asc| limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -345,7 +373,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -360,7 +388,9 @@
       "test_case_id": "check_owner_id_in_payment_service_dotnet_GET_owners_ownerId_pets_petId_payments_logs_availability_check",
       "description": "Verify owner.id in payment-ser  vice-dotnet GET /owners/{ownerId:int}/pets/{petId:int}/payments operation logs (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @timestamp,@message, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"payment-service-dotnet\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"GET /owners/{ownerId:int}/pets/{petId:int}/payments\" and not ispresent(attributes.aws.remote.service) | sort duration asc| limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -368,7 +398,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -383,15 +413,17 @@
       "test_case_id": "check_owner_id_in_payment_service_dotnet_POST_owners_ownerId_pets_petId_payments_logs_availability_check",
       "description": "Verify owner.id in payment-service-dotnet POST /owners/{ownerId:int}/pets/{petId:int}/payments/ operation logs (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
-      "query_string": "fields @timestamp,@message, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"payment-service-dotnet\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"POST /owners/{ownerId:int}/pets/{petId:int}/payments/\" and not ispresent(attributes.aws.remote.service) | sort duration asc| limit 10",
+      "log_group_names": [
+        "aws/spans"
+      ],
+      "query_string": "fields @timestamp,@message, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"payment-service-dotnet\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"POST /owners/{ownerId:int}/pets/{petId:int}/payments\" and not ispresent(attributes.aws.remote.service) | sort duration asc| limit 10",
       "time_range": {
         "relative_minutes": 180
       },
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -406,7 +438,9 @@
       "test_case_id": "check_owner_id_in_pet_clinic_frontend_java_PUT_api_customer_owners_ownerId_pets_petId_logs_availability_check",
       "description": "Verify owner.id in pet-clinic-frontend-java PUT /api/customer/owners/{ownerId}/pets/{petId} operation logs (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @timestamp, @message, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"pet-clinic-frontend-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"PUT /api/customer/owners/{ownerId}/pets/{petId}\" and not ispresent(attributes.aws.remote.service) | sort duration asc| limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -414,7 +448,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -429,7 +463,9 @@
       "test_case_id": "check_owner_id_in_pet_clinic_frontend_java_POST_api_visit_owners_ownerId_pets_petId_visits_logs_availability_check",
       "description": "Verify owner.id in pet-clinic-frontend-java POST /api/visit/owners/{ownerId}/pets/{petId}/visits operation logs (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @timestamp, @message, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"pet-clinic-frontend-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"POST /api/visit/owners/{ownerId}/pets/{petId}/visits\" and not ispresent(attributes.aws.remote.service) | sort duration asc| limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -437,7 +473,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -452,7 +488,9 @@
       "test_case_id": "check_owner_id_in_pet_clinic_frontend_java_POST_api_payments_owners_ownerId_pets_petId_logs_availability_check",
       "description": "Verify owner.id in pet-clinic-frontend-java POST /api/payments/owners/{ownerId}/pets/{petId} (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @timestamp, @message, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"pet-clinic-frontend-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"POST /api/payments/owners/{ownerId}/pets/{petId}\" and not ispresent(attributes.aws.remote.service) | sort duration asc| limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -460,7 +498,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -475,7 +513,9 @@
       "test_case_id": "check_owner_id_in_pet_clinic_frontend_java_POST_api_customer_owners_ownerId_pets_logs_availability_check",
       "description": "Verify owner.id in pet-clinic-frontend-java POST /api/customer/owners/{ownerId}/pets (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @timestamp, @message, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"pet-clinic-frontend-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"POST /api/customer/owners/{ownerId}/pets\" and not ispresent(attributes.aws.remote.service) | sort duration asc| limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -483,7 +523,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -498,7 +538,9 @@
       "test_case_id": "check_owner_id_in_pet_clinic_frontend_java_GET_api_visit_owners_ownerId_pets_petId_visits_logs_availability_check",
       "description": "Verify owner.id in pet-clinic-frontend-java GET /api/visit/owners/{ownerId}/pets/{petId}/visits (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @timestamp, @message, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"pet-clinic-frontend-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"GET /api/visit/owners/{ownerId}/pets/{petId}/visits\" and not ispresent(attributes.aws.remote.service) | sort duration asc| limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -506,7 +548,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -521,7 +563,9 @@
       "test_case_id": "check_owner_id_in_pet_clinic_frontend_java_GET_api_payments_owners_ownerId_pets_petId_visits_logs_availability_check",
       "description": "Verify owner.id in pet-clinic-frontend-java GET /api/payments/owners/{ownerId}/pets/{petId} (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @timestamp, @message, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"pet-clinic-frontend-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"GET /api/payments/owners/{ownerId}/pets/{petId}\" and not ispresent(attributes.aws.remote.service) | sort duration asc| limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -529,7 +573,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -544,7 +588,9 @@
       "test_case_id": "check_owner_id_in_pet_clinic_frontend_java_GET_api_gateway_owners_ownerId_logs_availability_check",
       "description": "Verify owner.id in pet-clinic-frontend-java GET /api/gateway/owners/{ownerId} (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @timestamp, @message, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"pet-clinic-frontend-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"GET /api/gateway/owners/{ownerId}\" and not ispresent(attributes.aws.remote.service) | sort duration asc| limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -552,7 +598,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -567,7 +613,9 @@
       "test_case_id": "check_owner_id_in_pet_clinic_frontend_java_GET_api_customer_owners_ownerId_logs_availability_check",
       "description": "Verify owner.id in pet-clinic-frontend-java GET /api/customer/owners/{ownerId} (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @timestamp, @message, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"pet-clinic-frontend-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"GET /api/customer/owners/{ownerId}\" and not ispresent(attributes.aws.remote.service) | sort duration asc| limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -575,7 +623,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -590,7 +638,9 @@
       "test_case_id": "check_owner_id_in_pet_clinic_frontend_java_GET_api_customer_owners_ownerId_pets_petId_logs_availability_check",
       "description": "Verify owner.id in pet-clinic-frontend-java GET /api/customer/owners/{ownerId}/pets/{petId} (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @timestamp, @message, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"pet-clinic-frontend-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"GET /api/customer/owners/{ownerId}/pets/{petId}\" and not ispresent(attributes.aws.remote.service) | sort duration asc| limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -598,7 +648,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {
@@ -613,7 +663,9 @@
       "test_case_id": "check_owner_id_in_pet_clinic_frontend_java_GET_api_customer_diagnose_owners_ownerId_pets_petId_logs_availability_check",
       "description": "Verify owner.id in pet-clinic-frontend-java GET /api/customer/diagnose/owners/{ownerId}/pets/{petId} (Scenario 13)",
       "test_scenario": "Scenario 13",
-      "log_group_names": ["aws/spans"],
+      "log_group_names": [
+        "aws/spans"
+      ],
       "query_string": "fields @timestamp, @message, traceId, endTimeUnixNano/1000000 as timestamp, spanId, name, coalesce(attributes.http.response.status_code, attributes.http.status_code, status.code) as statusCode, durationNano/1000000 as duration| filter attributes.aws.local.service=\"pet-clinic-frontend-java\" and attributes.aws.local.environment = \"eks:demo/default\"  and attributes.aws.local.operation = \"GET /api/customer/diagnose/owners/{ownerId}/pets/{petId}\" and not ispresent(attributes.aws.remote.service) | sort duration asc| limit 10",
       "time_range": {
         "relative_minutes": 180
@@ -621,7 +673,7 @@
       "validation_checks": [
         {
           "check_type": "count",
-          "expected_count": 1,  
+          "expected_count": 1,
           "comparison_operator": "GreaterThanOrEqualToThreshold"
         },
         {

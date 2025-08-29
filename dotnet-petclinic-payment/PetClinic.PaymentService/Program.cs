@@ -107,7 +107,7 @@ app.MapGet("/owners/{ownerId:int}/pets/{petId:int}/payments/{paymentId}",
     }
 );
 
-app.MapPost("/owners/{ownerId:int}/pets/{petId:int}/payments/",
+app.MapPost("/owners/{ownerId:int}/pets/{petId:int}/payments",
     async (
         int ownerId,
         int petId,

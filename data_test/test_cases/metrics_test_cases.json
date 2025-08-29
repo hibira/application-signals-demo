@@ -8,14 +8,19 @@
       "metric_name": "AttainmentRate",
       "statistic": "Sum",
       "dimensions": [
-        {"Name": "SloName", "Value": "appointment service availability"}
+        {
+          "Name": "SloName",
+          "Value": "appointment service availability"
+        }
       ],
       "evaluation_period_minutes": 180,
       "threshold": {
-        "comparison_operator": [{
-          "operator": "GreaterThanOrEqualToThreshold",
-          "threshold_value": 0
-        }]
+        "comparison_operator": [
+          {
+            "operator": "GreaterThanOrEqualToThreshold",
+            "threshold_value": 0
+          }
+        ]
       },
       "notes": "Corresponds to PDF scenario 1"
     },
@@ -27,16 +32,27 @@
       "metric_name": "Fault",
       "statistic": "Sum",
       "dimensions": [
-        {"Name": "Operation", "Value": "appointment-service-get/FunctionHandler"},
-        {"Name": "Environment", "Value": "lambda:default"},
-        {"Name": "Service", "Value": "appointment-service-get"}
+        {
+          "Name": "Operation",
+          "Value": "appointment-service-get/FunctionHandler"
+        },
+        {
+          "Name": "Environment",
+          "Value": "lambda:default"
+        },
+        {
+          "Name": "Service",
+          "Value": "appointment-service-get"
+        }
       ],
       "evaluation_period_minutes": 180,
       "threshold": {
-        "comparison_operator": [{
-          "operator": "GreaterThanOrEqualToThreshold",
-          "threshold_value": 0
-        }]
+        "comparison_operator": [
+          {
+            "operator": "GreaterThanOrEqualToThreshold",
+            "threshold_value": 0
+          }
+        ]
       },
       "notes": "Corresponds to PDF scenario 1"
     },
@@ -48,16 +64,27 @@
       "metric_name": "Latency",
       "statistic": "p99",
       "dimensions": [
-        {"Name": "Operation", "Value": "GET ^billings/$"},
-        {"Name": "Environment", "Value": "eks:demo/default"},
-        {"Name": "Service", "Value": "billing-service-python"}
+        {
+          "Name": "Operation",
+          "Value": "GET ^billings/$"
+        },
+        {
+          "Name": "Environment",
+          "Value": "eks:demo/default"
+        },
+        {
+          "Name": "Service",
+          "Value": "billing-service-python"
+        }
       ],
       "evaluation_period_minutes": 180,
       "threshold": {
-        "comparison_operator": [{
-          "operator": "GreaterThanOrEqualToThreshold",
-          "threshold_value": 0
-        }]
+        "comparison_operator": [
+          {
+            "operator": "GreaterThanOrEqualToThreshold",
+            "threshold_value": 0
+          }
+        ]
       },
       "notes": "Corresponds to PDF scenario 2"
     },
@@ -69,20 +96,43 @@
       "metric_name": "Latency",
       "statistic": "p99",
       "dimensions": [
-        {"Name": "Operation", "Value": "GET ^billings/$"},
-        {"Name": "Environment", "Value": "eks:demo/default"},
-        {"Name": "Service", "Value": "billing-service-python"},
-        {"Name": "RemoteOperation", "Value": "SELECT"},
-        {"Name": "RemoteService", "Value": "postgresql"},
-        {"Name": "RemoteResourceType", "Value": "DB::Connection"},
-        {"Name": "RemoteResourceIdentifier", "Value": "postgres|petclinic-python.cluster-c2v0qqeiude3.us-east-1.rds.amazonaws.com|5432"}
+        {
+          "Name": "Operation",
+          "Value": "GET ^billings/$"
+        },
+        {
+          "Name": "Environment",
+          "Value": "eks:demo/default"
+        },
+        {
+          "Name": "Service",
+          "Value": "billing-service-python"
+        },
+        {
+          "Name": "RemoteOperation",
+          "Value": "SELECT"
+        },
+        {
+          "Name": "RemoteService",
+          "Value": "postgresql"
+        },
+        {
+          "Name": "RemoteResourceType",
+          "Value": "DB::Connection"
+        },
+        {
+          "Name": "RemoteResourceIdentifier",
+          "Value": "postgres|petclinic-python.cluster-c2v0qqeiude3.us-east-1.rds.amazonaws.com|5432"
+        }
       ],
       "evaluation_period_minutes": 180,
       "threshold": {
-        "comparison_operator": [{
-          "operator": "GreaterThanOrEqualToThreshold",
-          "threshold_value": 0
-        }]
+        "comparison_operator": [
+          {
+            "operator": "GreaterThanOrEqualToThreshold",
+            "threshold_value": 0
+          }
+        ]
       },
       "notes": "Corresponds to PDF scenario 2"
     },
@@ -94,19 +144,39 @@
       "metric_name": "Latency",
       "statistic": "p99",
       "dimensions": [
-        {"Name": "RemoteOperation", "Value": "InvokeModel"},
-        {"Name": "RemoteService", "Value": "AWS::BedrockRuntime"},
-        {"Name": "Environment", "Value": "eks:demo/default"},
-        {"Name": "Service", "Value": "customers-service-java"},
-        {"Name": "RemoteResourceType", "Value": "AWS::Bedrock::Model"},
-        {"Name": "RemoteResourceIdentifier", "Value": "amazon.titan-text-express-v1"}
+        {
+          "Name": "RemoteOperation",
+          "Value": "InvokeModel"
+        },
+        {
+          "Name": "RemoteService",
+          "Value": "AWS::BedrockRuntime"
+        },
+        {
+          "Name": "Environment",
+          "Value": "eks:demo/default"
+        },
+        {
+          "Name": "Service",
+          "Value": "customers-service-java"
+        },
+        {
+          "Name": "RemoteResourceType",
+          "Value": "AWS::Bedrock::Model"
+        },
+        {
+          "Name": "RemoteResourceIdentifier",
+          "Value": "amazon.titan-text-express-v1"
+        }
       ],
       "evaluation_period_minutes": 180,
       "threshold": {
-        "comparison_operator": [{
-          "operator": "GreaterThanOrEqualToThreshold",
-          "threshold_value": 0
-        }]
+        "comparison_operator": [
+          {
+            "operator": "GreaterThanOrEqualToThreshold",
+            "threshold_value": 0
+          }
+        ]
       },
       "notes": "Corresponds to PDF scenario 3"
     },
@@ -118,19 +188,39 @@
       "metric_name": "Latency",
       "statistic": "p99",
       "dimensions": [
-        {"Name": "RemoteOperation", "Value": "InvokeModel"},
-        {"Name": "RemoteService", "Value": "AWS::BedrockRuntime"},
-        {"Name": "Environment", "Value": "eks:demo/default"},
-        {"Name": "Service", "Value": "customers-service-java"},
-        {"Name": "RemoteResourceType", "Value": "AWS::Bedrock::Model"},
-        {"Name": "RemoteResourceIdentifier", "Value": "anthropic.claude-v2:1"}
+        {
+          "Name": "RemoteOperation",
+          "Value": "InvokeModel"
+        },
+        {
+          "Name": "RemoteService",
+          "Value": "AWS::BedrockRuntime"
+        },
+        {
+          "Name": "Environment",
+          "Value": "eks:demo/default"
+        },
+        {
+          "Name": "Service",
+          "Value": "customers-service-java"
+        },
+        {
+          "Name": "RemoteResourceType",
+          "Value": "AWS::Bedrock::Model"
+        },
+        {
+          "Name": "RemoteResourceIdentifier",
+          "Value": "anthropic.claude-v2:1"
+        }
       ],
       "evaluation_period_minutes": 180,
       "threshold": {
-        "comparison_operator": [{
-          "operator": "GreaterThanOrEqualToThreshold",
-          "threshold_value": 0
-        }]
+        "comparison_operator": [
+          {
+            "operator": "GreaterThanOrEqualToThreshold",
+            "threshold_value": 0
+          }
+        ]
       },
       "notes": "Corresponds to PDF scenario 3"
     },
@@ -142,16 +232,27 @@
       "metric_name": "Fault",
       "statistic": "Sum",
       "dimensions": [
-        {"Name": "Operation", "Value": "POST /owners/{ownerId:int}/pets/{petId:int}/payments/"},
-        {"Name": "Environment", "Value": "eks:demo/default"},
-        {"Name": "Service", "Value": "payment-service-dotnet"}
+        {
+          "Name": "Operation",
+          "Value": "POST /owners/{ownerId:int}/pets/{petId:int}/payments"
+        },
+        {
+          "Name": "Environment",
+          "Value": "eks:demo/default"
+        },
+        {
+          "Name": "Service",
+          "Value": "payment-service-dotnet"
+        }
       ],
       "evaluation_period_minutes": 180,
       "threshold": {
-        "comparison_operator": [{
-          "operator": "GreaterThanOrEqualToThreshold",
-          "threshold_value": 0
-        }]
+        "comparison_operator": [
+          {
+            "operator": "GreaterThanOrEqualToThreshold",
+            "threshold_value": 0
+          }
+        ]
       },
       "notes": "Corresponds to PDF scenario 4"
     },
@@ -163,16 +264,27 @@
       "metric_name": "Error",
       "statistic": "Sum",
       "dimensions": [
-        {"Name": "Operation", "Value": "POST /owners/{ownerId:int}/pets/{petId:int}/payments/"},
-        {"Name": "Environment", "Value": "eks:demo/default"},
-        {"Name": "Service", "Value": "payment-service-dotnet"}
+        {
+          "Name": "Operation",
+          "Value": "POST /owners/{ownerId:int}/pets/{petId:int}/payments"
+        },
+        {
+          "Name": "Environment",
+          "Value": "eks:demo/default"
+        },
+        {
+          "Name": "Service",
+          "Value": "payment-service-dotnet"
+        }
       ],
       "evaluation_period_minutes": 180,
       "threshold": {
-        "comparison_operator": [{
-          "operator": "GreaterThanOrEqualToThreshold",
-          "threshold_value": 0
-        }]
+        "comparison_operator": [
+          {
+            "operator": "GreaterThanOrEqualToThreshold",
+            "threshold_value": 0
+          }
+        ]
       },
       "notes": "Corresponds to PDF scenario 4"
     },
@@ -184,16 +296,27 @@
       "metric_name": "Latency",
       "statistic": "SampleCount",
       "dimensions": [
-        {"Name": "Operation", "Value": "GET /owners/{ownerId:int}/pets/{petId:int}/payments"},
-        {"Name": "Environment", "Value": "eks:demo/default"},
-        {"Name": "Service", "Value": "payment-service-dotnet"}
+        {
+          "Name": "Operation",
+          "Value": "GET /owners/{ownerId:int}/pets/{petId:int}/payments"
+        },
+        {
+          "Name": "Environment",
+          "Value": "eks:demo/default"
+        },
+        {
+          "Name": "Service",
+          "Value": "payment-service-dotnet"
+        }
       ],
       "evaluation_period_minutes": 180,
       "threshold": {
-        "comparison_operator": [{
-          "operator": "GreaterThanOrEqualToThreshold",
-          "threshold_value": 0
-        }]
+        "comparison_operator": [
+          {
+            "operator": "GreaterThanOrEqualToThreshold",
+            "threshold_value": 0
+          }
+        ]
       },
       "notes": "Corresponds to PDF scenario 4"
     },
@@ -205,16 +328,27 @@
       "metric_name": "Fault",
       "statistic": "Sum",
       "dimensions": [
-        {"Name": "Operation", "Value": "POST /owners/{ownerId}/pets/{petId}/visits"},
-        {"Name": "Environment", "Value": "eks:demo/default"},
-        {"Name": "Service", "Value": "visits-service-java"}
+        {
+          "Name": "Operation",
+          "Value": "POST /owners/{ownerId}/pets/{petId}/visits"
+        },
+        {
+          "Name": "Environment",
+          "Value": "eks:demo/default"
+        },
+        {
+          "Name": "Service",
+          "Value": "visits-service-java"
+        }
       ],
       "evaluation_period_minutes": 180,
       "threshold": {
-        "comparison_operator": [{
-          "operator": "GreaterThanOrEqualToThreshold",
-          "threshold_value": 0
-        }]
+        "comparison_operator": [
+          {
+            "operator": "GreaterThanOrEqualToThreshold",
+            "threshold_value": 0
+          }
+        ]
       },
       "notes": "Corresponds to PDF scenario 6"
     },
@@ -226,16 +360,27 @@
       "metric_name": "Latency",
       "statistic": "SampleCount",
       "dimensions": [
-        {"Name": "Operation", "Value": "POST /owners/{ownerId}/pets/{petId}/visits"},
-        {"Name": "Environment", "Value": "eks:demo/default"},
-        {"Name": "Service", "Value": "visits-service-java"}
+        {
+          "Name": "Operation",
+          "Value": "POST /owners/{ownerId}/pets/{petId}/visits"
+        },
+        {
+          "Name": "Environment",
+          "Value": "eks:demo/default"
+        },
+        {
+          "Name": "Service",
+          "Value": "visits-service-java"
+        }
       ],
       "evaluation_period_minutes": 180,
-      "threshold": {  
-        "comparison_operator": [{
-          "operator": "GreaterThanOrEqualToThreshold",
-          "threshold_value": 0  
-        }]
+      "threshold": {
+        "comparison_operator": [
+          {
+            "operator": "GreaterThanOrEqualToThreshold",
+            "threshold_value": 0
+          }
+        ]
       },
       "notes": "Corresponds to PDF scenario 6"
     },
@@ -247,15 +392,19 @@
       "metric_name": "AttainmentRate",
       "statistic": "Average",
       "dimensions": [
-        {"Name": "SloName", "Value": "Latency for Registering an Owner"}
+        {
+          "Name": "SloName",
+          "Value": "Latency for Registering an Owner"
+        }
       ],
       "evaluation_period_minutes": 60,
       "threshold": {
-        "comparison_operator": [{
-          "operator": "GreaterThanThreshold",
-          "threshold_value": 0
-        }
-      ]
+        "comparison_operator": [
+          {
+            "operator": "GreaterThanThreshold",
+            "threshold_value": 0
+          }
+        ]
       },
       "cli_command_hint": "aws cloudwatch get-metric-data ...",
       "notes": "Corresponds to PDF scenario 7"
@@ -268,16 +417,27 @@
       "metric_name": "Latency",
       "statistic": "p99",
       "dimensions": [
-        {"Name": "Service", "Value": "pet-clinic-frontend-java"},
-        {"Name": "Operation", "Value": "POST /api/customer/owners"},
-        {"Name": "Environment", "Value": "eks:demo/default"}
+        {
+          "Name": "Service",
+          "Value": "pet-clinic-frontend-java"
+        },
+        {
+          "Name": "Operation",
+          "Value": "POST /api/customer/owners"
+        },
+        {
+          "Name": "Environment",
+          "Value": "eks:demo/default"
+        }
       ],
       "evaluation_period_minutes": 60,
       "threshold": {
-        "comparison_operator": [{ 
-          "operator": "GreaterThanOrEqualToThreshold",
-          "threshold_value": 0
-        }]
+        "comparison_operator": [
+          {
+            "operator": "GreaterThanOrEqualToThreshold",
+            "threshold_value": 0
+          }
+        ]
       },
       "notes": "Corresponds to PDF scenario 7"
     },
@@ -289,20 +449,43 @@
       "metric_name": "Error",
       "statistic": "Sum",
       "dimensions": [
-        {"Name": "RemoteOperation", "Value": "PurgeQueue"},
-        {"Name": "RemoteService", "Value": "AWS::SQS"},
-        {"Name": "Environment", "Value": "eks:demo/default"},
-        {"Name": "Service", "Value": "customers-service-java"},
-        {"Name": "Operation", "Value": "POST /owners/{ownerId}/pets"},
-        {"Name": "RemoteResourceType", "Value": "AWS::SQS::Queue"},
-        {"Name": "RemoteResourceIdentifier", "Value": "apm_test"}
+        {
+          "Name": "RemoteOperation",
+          "Value": "PurgeQueue"
+        },
+        {
+          "Name": "RemoteService",
+          "Value": "AWS::SQS"
+        },
+        {
+          "Name": "Environment",
+          "Value": "eks:demo/default"
+        },
+        {
+          "Name": "Service",
+          "Value": "customers-service-java"
+        },
+        {
+          "Name": "Operation",
+          "Value": "POST /owners/{ownerId}/pets"
+        },
+        {
+          "Name": "RemoteResourceType",
+          "Value": "AWS::SQS::Queue"
+        },
+        {
+          "Name": "RemoteResourceIdentifier",
+          "Value": "apm_test"
+        }
       ],
       "evaluation_period_minutes": 60,
       "threshold": {
-        "comparison_operator": [{
-          "operator": "GreaterThanOrEqualToThreshold",
-          "threshold_value": 0
-        }]
+        "comparison_operator": [
+          {
+            "operator": "GreaterThanOrEqualToThreshold",
+            "threshold_value": 0
+          }
+        ]
       },
       "notes": "Corresponds to PDF scenario 8"
     },
@@ -314,15 +497,23 @@
       "metric_name": "Http4xxCount",
       "statistic": "Sum",
       "dimensions": [
-        {"Name": "application_name", "Value": "pet-clinic-client"},
-        {"Name": "PageId", "Value": "/owners/details/{ownerId}"}
+        {
+          "Name": "application_name",
+          "Value": "pet-clinic-client"
+        },
+        {
+          "Name": "PageId",
+          "Value": "/owners/details/{ownerId}"
+        }
       ],
       "evaluation_period_minutes": 60,
       "threshold": {
-        "comparison_operator": [{
-          "operator": "GreaterThanOrEqualToThreshold",
-          "threshold_value": 0
-        }]
+        "comparison_operator": [
+          {
+            "operator": "GreaterThanOrEqualToThreshold",
+            "threshold_value": 0
+          }
+        ]
       },
       "notes": "Corresponds to PDF scenario 9"
     },
@@ -334,16 +525,27 @@
       "metric_name": "Latency",
       "statistic": "p99",
       "dimensions": [
-        {"Name": "Operation", "Value": "audit-service/LambdaService"},
-        {"Name": "Environment", "Value": "lambda:default"},
-        {"Name": "Service", "Value": "audit-service"}
+        {
+          "Name": "Operation",
+          "Value": "audit-service/LambdaService"
+        },
+        {
+          "Name": "Environment",
+          "Value": "lambda:default"
+        },
+        {
+          "Name": "Service",
+          "Value": "audit-service"
+        }
       ],
       "evaluation_period_minutes": 180,
       "threshold": {
-        "comparison_operator": [{
-          "operator": "GreaterThanOrEqualToThreshold",
-          "threshold_value": 0
-        }]
+        "comparison_operator": [
+          {
+            "operator": "GreaterThanOrEqualToThreshold",
+            "threshold_value": 0
+          }
+        ]
       },
       "notes": "Corresponds to PDF scenario 11"
     },
@@ -355,17 +557,21 @@
       "metric_name": "BreachedCount",
       "statistic": "Sum",
       "dimensions": [
-        {"Name": "SloName", "Value": "Availability for Retrieving Payments"}
+        {
+          "Name": "SloName",
+          "Value": "Availability for Retrieving Payments"
+        }
       ],
       "evaluation_period_minutes": 180,
       "threshold": {
-        "comparison_operator": [{
-          "operator": "GreaterThanOrEqualToThreshold",
-          "threshold_value": 0
-        }]
+        "comparison_operator": [
+          {
+            "operator": "GreaterThanOrEqualToThreshold",
+            "threshold_value": 0
+          }
+        ]
       },
       "notes": "Corresponds to PDF scenario 12"
     }
   ]
 }
-
