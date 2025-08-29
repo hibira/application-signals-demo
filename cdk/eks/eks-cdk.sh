@@ -56,22 +56,31 @@ if [[ "$ACTION" == "deploy" ]]; then
 
   echo "Starting CDK deployment for all stacks in the app"
   # Deploy the EKS cluster with the sample app first
-  if cdk deploy --all --require-approval never; then
+  if cdk deploy --all --require-approval never --no-rollback; then
     echo "Deployment successful for sample app in EKS Cluster"
 
     # Once the sample app is deployed, it will take up to 10 minutes for SLO metrics to appear
-    sleep 3600
-    if cdk deploy --context enableSlo=True --all --require-approval never; then
+    echo "Waiting 45 minutes for Application Signals metrics to accumulate..."
+    for i in {45..1}; do
+      echo "Waiting $i minutes remaining..."
+      sleep 60
+    done
+    echo "Wait complete. Proceeding with SLO deployment..."
+
+    if cdk deploy --context enableSlo=True --all --require-approval never --no-rollback; then
       echo "Synthetic canary and SLO was deployed successfully"
     else
-      echo "Synthetic canary and SLO failed to deploy. Please run `cdk destroy --context enableSlo=True --all --force --verbose`"
-      # cdk destroy --context enableSlo=True --all --force --verbose
+      echo "SLO deployment failed. Cleaning up SLO-related stacks only..."
+      cdk destroy AppSignalsSloStack --context enableSlo=True --force --verbose
+      cdk destroy AppSignalsCanaryStack --context enableSlo=True --force --verbose
+      echo "SLO stacks cleaned up. You can retry deployment without waiting 45 minutes again."
+      echo "To retry: cdk deploy --context enableSlo=True --all --require-approval never"
       exit 1
     fi
   else
-    echo "Deployment failed. Please run `cdk destroy --all --force --verbose`"
-    # echo "Deployment failed. Attempting to clean up resources by destroying all stacks..."
-    # cdk destroy --all --force --verbose
+    # echo "Deployment failed. Please run `cdk destroy --all --force --verbose`"
+    echo "Deployment failed. Attempting to clean up resources by destroying all stacks..."
+    cdk destroy --all --force --verbose
     exit 1
   fi
 elif [[ "$ACTION" == "destroy" ]]; then
