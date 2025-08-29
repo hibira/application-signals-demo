@@ -72,7 +72,6 @@ if [[ "$ACTION" == "deploy" ]]; then
     else
       echo "SLO deployment failed. Cleaning up SLO-related stacks only..."
       cdk destroy AppSignalsSloStack --context enableSlo=True --force --verbose
-      cdk destroy AppSignalsCanaryStack --context enableSlo=True --force --verbose
       echo "SLO stacks cleaned up. You can retry deployment without waiting 45 minutes again."
       echo "To retry: cdk deploy --context enableSlo=True --all --require-approval never"
       exit 1
