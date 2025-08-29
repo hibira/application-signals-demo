@@ -95,6 +95,7 @@ git checkout remove-cloud9
 1. Build container images for each micro-service application
 
 ``` shell
+set MAVEN_OPTS=-Dmaven.test.skip=true
 ./mvnw clean install -P buildDocker
 ```
 
