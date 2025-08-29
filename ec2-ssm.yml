@@ -684,6 +684,7 @@ Resources:
             Action: sts:AssumeRole
       ManagedPolicyArns:
         - !Sub arn:${AWS::Partition}:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/AdministratorAccess
       Policies:
         - PolicyName: !Sub ${UserName}-${Environment}-policy
           PolicyDocument:
