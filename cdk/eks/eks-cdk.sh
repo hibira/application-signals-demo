@@ -60,7 +60,7 @@ if [[ "$ACTION" == "deploy" ]]; then
     echo "Deployment successful for sample app in EKS Cluster"
 
     # Once the sample app is deployed, it will take up to 10 minutes for SLO metrics to appear
-    sleep 600
+    sleep 1200
     if cdk deploy --context enableSlo=True --all --require-approval never; then
       echo "Synthetic canary and SLO was deployed successfully"
     else
