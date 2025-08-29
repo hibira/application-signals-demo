@@ -124,6 +124,7 @@ export class CloudWatchRumStack extends Stack {
         name: 'HttpErrorCount',
         namespace: 'AWS/RUM',
         unitLabel: 'Count',
+        valueKey: 'event_details.response.status',
         dimensionKeys: {
           'metadata.pageId': 'PageId',
         },
