@@ -1,8 +1,11 @@
 import { Construct } from 'constructs';
-import { aws_applicationsignals as applicationsignals, Stack, StackProps, Tag } from 'aws-cdk-lib';
+import { aws_applicationsignals as applicationsignals, Stack, StackProps, Tag, Duration } from 'aws-cdk-lib';
 import { AwsCustomResource, AwsCustomResourcePolicy, PhysicalResourceId } from 'aws-cdk-lib/custom-resources';
 import { PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { CfnServiceLevelObjective } from "aws-cdk-lib/aws-applicationsignals";
+import { Topic } from 'aws-cdk-lib/aws-sns';
+import { Alarm, Metric, ComparisonOperator, TreatMissingData } from 'aws-cdk-lib/aws-cloudwatch';
+import { SnsAction } from 'aws-cdk-lib/aws-cloudwatch-actions';
 import ExclusionWindowProperty = CfnServiceLevelObjective.ExclusionWindowProperty;
 
 
@@ -17,6 +20,7 @@ export class SloStack extends Stack {
     private readonly endpoint = `https://application-signals.${this.region}.api.aws`;
     private readonly eksClusterName: string;
     private readonly sampleAppNamespace: string;
+    private readonly snsAlertTopic: Topic;
 
     constructor(scope: Construct, id: string, props: SloProps) {
         super(scope, id, props);
@@ -24,7 +28,13 @@ export class SloStack extends Stack {
         const { eksClusterName, sampleAppNamespace, awsApplicationTag } = props;
 
         this.eksClusterName = eksClusterName;
-        this.sampleAppNamespace = sampleAppNamespace
+        this.sampleAppNamespace = sampleAppNamespace;
+
+        // Create SNS topic for SLO alerts
+        this.snsAlertTopic = new Topic(this, 'SloAlertTopic', {
+            topicName: 'slo-alert',
+            displayName: 'SLO Alert Notifications'
+        });
 
         const enableTopologyDiscovery = new AwsCustomResource(this, 'ApplicationSignalsStartDiscovery', {
             onUpdate: {
@@ -121,12 +131,35 @@ export class SloStack extends Stack {
             // exclusionWindows
         ));
 
+        const postOwnerPet99AvailabilitySlo = new applicationsignals.CfnServiceLevelObjective(this, 'postOwnerPet99AvailabilitySLO', this.getSloProp(
+            "Availability for Owners Pets",
+            "Availability larger than 99 for Post Owners Pet operation",
+            "POST",
+            "AVAILABILITY",
+            99.0,
+            "GreaterThan",
+            awsApplicationTag,
+            undefined,
+            "/api/customer/owners/{ownerId}/pets",
+            "pet-clinic-frontend-java"
+        ));
+
         getOwner99AvailabilitySlo.node.addDependency(enableTopologyDiscovery);
         getOwner99LatencySlo.node.addDependency(enableTopologyDiscovery);
         postOwner99AvailabilitySlo.node.addDependency(enableTopologyDiscovery);
         postOwner99LatencySlo.node.addDependency(enableTopologyDiscovery);
         billingActivitiesLatencySlo.node.addDependency(enableTopologyDiscovery);
         getPaymentAvailabilitySlo.node.addDependency(enableTopologyDiscovery);
+        postOwnerPet99AvailabilitySlo.node.addDependency(enableTopologyDiscovery);
+
+        // Create alarms for SLO violations
+        this.createSloAlarm(getOwner99AvailabilitySlo, 'GetOwnerAvailability');
+        this.createSloAlarm(getOwner99LatencySlo, 'GetOwnerLatency');
+        this.createSloAlarm(postOwner99AvailabilitySlo, 'PostOwnerAvailability');
+        this.createSloAlarm(postOwner99LatencySlo, 'PostOwnerLatency');
+        this.createSloAlarm(billingActivitiesLatencySlo, 'BillingActivitiesLatency');
+        this.createSloAlarm(getPaymentAvailabilitySlo, 'GetPaymentAvailability');
+        this.createSloAlarm(postOwnerPet99AvailabilitySlo, 'PostOwnerPetAvailability');
     }
 
     getSloProp(name: string, description: string, requestType: string, metricType: string, metricThreshold: number, comparisonOperator: string, awsApplicationTag: string, statistic?: string, operationPath?: string, serviceName?: string, serviceType?: string, exclusionWindows?: ExclusionWindowProperty[]) {
@@ -172,5 +205,28 @@ export class SloStack extends Stack {
             exclusionWindows: exclusionWindows
         }
         return sloProp
+    }
+
+    private createSloAlarm(slo: applicationsignals.CfnServiceLevelObjective, alarmName: string) {
+        const alarm = new Alarm(this, `${alarmName}SloAlarm`, {
+            alarmName: `SLO-Violation-${alarmName}`,
+            alarmDescription: `SLO violation alarm for ${slo.name}`,
+            metric: new Metric({
+                namespace: 'AWS/ApplicationSignals',
+                metricName: 'BreachedCount',
+                dimensionsMap: {
+                    'SloName': slo.name!
+                },
+                statistic: 'Sum',
+                period: Duration.minutes(5)
+            }),
+            threshold: 1, // Alert on any breach
+            comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+            evaluationPeriods: 2,
+            treatMissingData: TreatMissingData.NOT_BREACHING
+        });
+
+        alarm.addAlarmAction(new SnsAction(this.snsAlertTopic));
+        alarm.node.addDependency(slo);
     }
 }

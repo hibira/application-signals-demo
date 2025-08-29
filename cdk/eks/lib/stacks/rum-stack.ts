@@ -121,6 +121,15 @@ export class CloudWatchRumStack extends Stack {
         eventPattern: '{"event_type":["com.amazon.rum.js_error_event"],"metadata":{"pageId":["/welcome"]}}',
       },
       {
+        name: 'HttpErrorCount',
+        namespace: 'AWS/RUM',
+        unitLabel: 'Count',
+        dimensionKeys: {
+          'metadata.pageId': 'PageId',
+        },
+        eventPattern: '{"event_type":["com.amazon.rum.http_event"],"metadata":{"pageId":["/welcome"]},"event_details":{"response":{"status":[{"numeric":[">=",400]}]}}}',
+      },
+      {
         name: 'WebVitalsLargestContentfulPaint',
         namespace: 'AWS/RUM',
         unitLabel: 'Milliseconds',
