@@ -9,6 +9,10 @@
 ACTION=$1
 USE_OTLP=${2:-false}  # Default value is false
 
+# Setup logging to both terminal and file
+LOG_FILE="cdk-deployment-$(date +%Y%m%d-%H%M%S).log"
+exec > >(tee -a "$LOG_FILE") 2>&1
+
 # Check for action parameter
 if [[ -z "$ACTION" ]]; then
   echo "Usage: $0 <action>"
