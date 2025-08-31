@@ -61,7 +61,7 @@ if [[ "$ACTION" == "deploy" ]]; then
 
     # Once the sample app is deployed, it will take up to 10 minutes for SLO metrics to appear
     echo "Waiting 45 minutes for Application Signals metrics to accumulate..."
-    for i in {45..1}; do
+    for i in {60..1}; do
       echo "Waiting $i minutes remaining..."
       sleep 60
     done
