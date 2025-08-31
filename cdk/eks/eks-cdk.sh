@@ -59,23 +59,31 @@ if [[ "$ACTION" == "deploy" ]]; then
   if cdk deploy --all --require-approval never --no-rollback; then
     echo "Deployment successful for sample app in EKS Cluster"
 
-    # Once the sample app is deployed, it will take up to 10 minutes for SLO metrics to appear
-    echo "Waiting 45 minutes for Application Signals metrics to accumulate..."
-    for i in {60..1}; do
-      echo "Waiting $i minutes remaining..."
-      sleep 60
-    done
-    echo "Wait complete. Proceeding with SLO deployment..."
+    # Retry SLO deployment up to 10 times with 10-minute intervals
+    MAX_RETRIES=10
+    for attempt in $(seq 1 $MAX_RETRIES); do
+      echo "Waiting 10 minutes for Application Signals metrics to accumulate... (Attempt $attempt/$MAX_RETRIES)"
+      for i in {10..1}; do
+        echo "Waiting $i minutes remaining..."
+        sleep 60
+      done
+      echo "Wait complete. Proceeding with SLO deployment (Attempt $attempt/$MAX_RETRIES)..."
 
-    if cdk deploy --context enableSlo=True --all --require-approval never --no-rollback; then
-      echo "Synthetic canary and SLO was deployed successfully"
-    else
-      echo "SLO deployment failed. Cleaning up SLO-related stacks only..."
-      cdk destroy AppSignalsSloStack --context enableSlo=True --force --verbose
-      echo "SLO stacks cleaned up. You can retry deployment without waiting 45 minutes again."
-      echo "To retry: cdk deploy --context enableSlo=True --all --require-approval never"
-      exit 1
-    fi
+      if cdk deploy --context enableSlo=True --all --require-approval never --no-rollback; then
+        echo "Synthetic canary and SLO was deployed successfully on attempt $attempt"
+        break
+      else
+        echo "SLO deployment failed on attempt $attempt. Cleaning up SLO-related stacks..."
+        cdk destroy AppSignalsSloStack --context enableSlo=True --force --verbose
+        
+        if [[ $attempt -eq $MAX_RETRIES ]]; then
+          echo "All $MAX_RETRIES attempts failed. Exiting."
+          exit 1
+        else
+          echo "Retrying in next iteration..."
+        fi
+      fi
+    done
   else
     # echo "Deployment failed. Please run `cdk destroy --all --force --verbose`"
     echo "Deployment failed. Attempting to clean up resources by destroying all stacks..."
