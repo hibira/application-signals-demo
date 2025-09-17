@@ -94,18 +94,18 @@ export class SloStack extends Stack {
             awsApplicationTag,
             "p99"
         ));
-        const billingActivitiesLatencySlo = new applicationsignals.CfnServiceLevelObjective(this, 'billingActivitiesLatencySLO', this.getSloProp(
-            "Latency for Billing Activities",
-            "Latency P99 less than 300 ms for GET Billing Activities operation",
-            "GET",
-            "LATENCY",
-            300.0,
-            "LessThan",
-            awsApplicationTag,
-            "p99",
-            "^billings/$",
-            "billing-service-python"
-        ));
+        // const billingActivitiesLatencySlo = new applicationsignals.CfnServiceLevelObjective(this, 'billingActivitiesLatencySLO', this.getSloProp(
+        //     "Latency for Billing Activities",
+        //     "Latency P99 less than 300 ms for GET Billing Activities operation",
+        //     "GET",
+        //     "LATENCY",
+        //     300.0,
+        //     "LessThan",
+        //     awsApplicationTag,
+        //     "p99",
+        //     "^billings/$",
+        //     "billing-service-python"
+        // ));
 
         const exclusionWindows = [{
             window: {
@@ -148,7 +148,7 @@ export class SloStack extends Stack {
         getOwner99LatencySlo.node.addDependency(enableTopologyDiscovery);
         postOwner99AvailabilitySlo.node.addDependency(enableTopologyDiscovery);
         postOwner99LatencySlo.node.addDependency(enableTopologyDiscovery);
-        billingActivitiesLatencySlo.node.addDependency(enableTopologyDiscovery);
+        // billingActivitiesLatencySlo.node.addDependency(enableTopologyDiscovery);
         getPaymentAvailabilitySlo.node.addDependency(enableTopologyDiscovery);
         postOwnerPet99AvailabilitySlo.node.addDependency(enableTopologyDiscovery);
 
@@ -157,7 +157,7 @@ export class SloStack extends Stack {
         this.createSloAlarm(getOwner99LatencySlo, 'GetOwnerLatency');
         this.createSloAlarm(postOwner99AvailabilitySlo, 'PostOwnerAvailability');
         this.createSloAlarm(postOwner99LatencySlo, 'PostOwnerLatency');
-        this.createSloAlarm(billingActivitiesLatencySlo, 'BillingActivitiesLatency');
+        // this.createSloAlarm(billingActivitiesLatencySlo, 'BillingActivitiesLatency');
         this.createSloAlarm(getPaymentAvailabilitySlo, 'GetPaymentAvailability');
         this.createSloAlarm(postOwnerPet99AvailabilitySlo, 'PostOwnerPetAvailability');
     }
