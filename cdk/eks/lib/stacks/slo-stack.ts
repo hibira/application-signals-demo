@@ -50,6 +50,7 @@ export class SloStack extends Stack {
                     actions: [
                         'application-signals:StartDiscovery',
                         'iam:CreateServiceLinkedRole',
+                        'cloudtrail:CreateServiceLinkedChannel',
                     ],
                     resources: ['*'],
                 }),
